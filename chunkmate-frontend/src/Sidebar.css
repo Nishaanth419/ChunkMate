@@ -1,0 +1,47 @@
+/* src/Sidebar.css */
+.sidebar {
+  width: 250px;
+  background-color: #e0f7fa;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.document-list {
+  flex: 1;
+}
+
+.document-item {
+  margin-bottom: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: #333;
+}
+
+.document-item.active {
+  font-weight: bold;
+  color: #00796b;
+  background-color: #b2dfdb;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.upload-btn {
+  background-color: #80cbc4;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.upload-btn:hover {
+  background-color: #4db6ac;
+}
