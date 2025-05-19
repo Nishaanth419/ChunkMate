@@ -1,43 +1,75 @@
-/* src/ChunkViewer.css */
 .chunk-viewer {
   padding: 1.5rem;
   flex: 1;
   overflow-y: auto;
 }
 
-.chunk-block {
-  position: relative;
-  margin-bottom: 1rem;
-  padding: 1rem 1rem 1rem 2rem;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+/* Container that holds number and chunk side by side */
+.chunk-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 2rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+}
+
+/* Chunk number on the left */
+.chunk-number {
+  font-size: 1rem;
+  font-weight: bold;
+  background: #f9a825;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+/* The chunk content block */
+.chunk-block {
+  background-color: #ffffff;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
   border-left: 4px solid transparent;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease;
+  width: 100%;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
 }
 
 .chunk-block:hover {
   background-color: #f5f5f5;
 }
 
-.chunk-block.selected {
+.chunk-container.selected .chunk-block {
   background-color: #fff8e1;
   border-left: 4px solid #f9a825;
 }
 
-.chunk-number {
-  position: absolute;
-  top: 0.75rem;
-  right: -2.5rem;
-  font-size: 0.9rem;
-  background: #f9a825;
-  color: white;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-weight: bold;
+.chunk-text {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.chunk-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
-.chunk-text {
-  white-space: pre-wrap;
+.chunk-actions button {
+  background-color: #eeeeee;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.chunk-actions button:hover {
+  background-color: #ddd;
 }

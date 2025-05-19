@@ -1,47 +1,71 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
 import ChunkViewer from './ChunkViewer';
+import { fetchDocuments, fetchChunks, uploadFile } from './api';
 import './App.css';
 
 const App = () => {
-  const [documents, setDocuments] = useState(['Document 1', 'Document 2', 'Document 3']);
-  const [selectedDocument, setSelectedDocument] = useState('Document 1');
-  const [chunks, setChunks] = useState({
-    'Document 1': [
-      'Welcome to Placeholderland...',
-      'This is the part where...',
-      'Here’s what we offer...',
-      'Every screen you tap...'
-    ],
-    'Document 2': [
-      'Chunk A from Doc 2',
-      'Chunk B from Doc 2'
-    ],
-    'Document 3': [
-      'Chunk A from Doc 3',
-      'Chunk B from Doc 3'
-    ],
-  });
+  const [documents, setDocuments] = useState([]);
+  const [selectedDocId, setSelectedDocId] = useState(null);
+  const [selectedDocName, setSelectedDocName] = useState('');
+  const [chunks, setChunks] = useState([]);
+  const [message, setMessage] = useState(null); // ✅ message state
 
-  const handleSelectDocument = (doc) => {
-    console.log("Selected:", doc);
-    setSelectedDocument(doc);
+  const loadDocuments = async () => {
+    const docs = await fetchDocuments();
+    setDocuments(docs);
+    if (docs.length > 0) {
+      selectDocument(docs[0]);
+    }
   };
+
+  const selectDocument = async (doc) => {
+    setSelectedDocId(doc.id);
+    setSelectedDocName(doc.name);
+    const chunkData = await fetchChunks(doc.id);
+    setChunks(chunkData);
+  };
+
+  const handleUpload = async (file) => {
+    try {
+      const res = await uploadFile(file);
+      if (res.message) {
+        setMessage({ type: 'success', text: res.message });
+      } else {
+        setMessage({ type: 'error', text: 'Upload completed but no message returned.' });
+      }
+      await loadDocuments();
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Upload failed. Please try again.' });
+    }
+
+    // Auto-dismiss after 3 seconds
+    setTimeout(() => setMessage(null), 3000);
+  };
+
+  useEffect(() => {
+    loadDocuments();
+  }, []);
 
   return (
     <div className="app-container">
       <Sidebar
         documents={documents}
-        selectedDocument={selectedDocument}
-        onSelectDocument={handleSelectDocument}
-        onUploadClick={() => alert("Upload coming soon...")}
+        selectedDocument={selectedDocId}
+        onSelect={selectDocument}
+        onUpload={handleUpload}
       />
+
       <div className="main-content">
-        <h2>{selectedDocument}</h2>
-        <ChunkViewer
-          document={selectedDocument}
-          chunks={chunks[selectedDocument] || []}
-        />
+        {/* ✅ Message Alert */}
+        {message && (
+          <div className={`alert ${message.type}`}>
+            {message.text}
+          </div>
+        )}
+        
+        <h2>{selectedDocName || 'Select a document'}</h2>
+        <ChunkViewer chunks={chunks} />
       </div>
     </div>
   );
