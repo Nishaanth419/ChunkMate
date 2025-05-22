@@ -32,7 +32,7 @@
 
 ```bash
 git clone https://github.com/Nishaanth419/ChunkMate.git
-cd chunk-mate
+cd ChunkMate
 ```
 
 ---
