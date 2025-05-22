@@ -1,135 +1,235 @@
-# 📚 Chunk Mate
+# 🧠 Chunk Mate
 
-**Chunk Mate** is a web-based tool for uploading and processing Markdown documents by breaking them into logical chunks, including support for headings, paragraphs, tables, and references. It's designed to assist Generative AI workflows by making documents easier to analyze.
-
----
-
-## 🚀 Features
-
-- Upload Markdown `.md` files via a drag-and-drop UI
-- View a sidebar with all uploaded documents
-- Automatically chunks documents by:
-  - Paragraphs (with heading context)
-  - Tables (each row as a separate chunk)
-  - Extracts and stores hyperlinks separately
-- Highlight and view chunks with chunk numbers
-- Responsive UI built with React + Vite
-- Backend using Express.js and PostgreSQL
+**Chunk Mate** is a web-based tool designed for AI/LLM workflows that lets you upload `.md` (Markdown) files, chunk them into logical sections (paragraphs, table rows), and store them in a PostgreSQL database for downstream processing.
 
 ---
 
-## 🧱 Tech Stack
+## 📦 Features
 
-| Frontend | Backend | Database |
-|----------|---------|----------|
-| React + Vite | Node.js + Express | PostgreSQL |
-
----
-
-## 📁 Project Structure
-
-```
-chunk-mate/
-├── chunkmate-frontend/
-│   ├── public/
-│   ├── src/
-│   │   ├── App.jsx
-│   │   ├── App.css
-│   │   ├── api.js
-│   │   └── ...
-│   └── index.html
-├── chunkmate-backend/
-│   ├── uploads/
-│   ├── routes/
-│   ├── models/
-│   ├── db.js
-│   └── server.js
-├── README.md
-└── .env
-```
+- 📝 Upload Markdown (`.md`) documents
+- ✂️ Automatically chunk paragraphs and tables
+- 🔗 Extract and store hyperlinks
+- 📄 View documents and chunks in the frontend
+- 📥 Copy/download chunks
+- 🌐 Built with React + Express + PostgreSQL
 
 ---
 
-## ⚙️ Setup Instructions
+## 🛠 Tech Stack
 
-### 🖥️ 1. Clone the repository
+| Layer     | Tech                         |
+|-----------|------------------------------|
+| Frontend  | React + Vite + Styled CSS    |
+| Backend   | Node.js + Express + marked   |
+| Database  | PostgreSQL                   |
+| Other     | express-fileupload, pg       |
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/chunk-mate.git
+git clone https://github.com/Nishaanth419/ChunkMate.git
 cd chunk-mate
 ```
 
 ---
 
-### 🗃️ 2. Setup the Backend
+### 2. Setup PostgreSQL16 Database
+
+1. Install **pgAdmin4** v.9.0 https://www.pgadmin.org/download/pgadmin-4-windows/.
+2. Create a new database (e.g., `chunkmate`).
+3. Run the SQL in `backend/schema.sql` or:
+
+```sql
+CREATE TABLE documents (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  upload_date TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE chunks (
+  id SERIAL PRIMARY KEY,
+  document_id INTEGER REFERENCES documents(id) ON DELETE CASCADE,
+  chunk_number INTEGER NOT NULL,
+  content TEXT NOT NULL
+);
+
+CREATE TABLE hyperlinks (
+  id SERIAL PRIMARY KEY,
+  document_id INTEGER REFERENCES documents(id) ON DELETE CASCADE,
+  chunk_id INTEGER REFERENCES chunks(id) ON DELETE CASCADE,
+  url TEXT NOT NULL
+);
+```
+
+---
+
+### 3. Configure Environment Variables
+
+In `chunkmate-backend/`, create a `.env` file:
+
+```env
+PORT=5000
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD="Your pgadmin password"
+DB_DATABASE="Database Name"
+```
+
+---
+
+### 4. Run the Backend
 
 ```bash
 cd chunkmate-backend
 npm install
+node index.js
 ```
 
-- Create a `.env` file:
-
-```env
-PORT=5000
-DATABASE_URL=postgres://username:password@localhost:5432/chunkmate
+It should show:
 ```
-
-- Start the server:
-
-```bash
-node server.js
+Server started on http://localhost:5000
 ```
 
 ---
 
-### 🖼️ 3. Setup the Frontend
+### 5. Run the Frontend
+
+```bash
+cd ../chunkmate-frontend
+npm install
+npm install axios
+npm run dev
+```
+
+Frontend should run at:
+```
+http://localhost:5173
+```
+
+---
+
+## 📂 Directory Structure
+
+```
+chunk-mate/
+├── chunkmate-frontend/    # React frontend
+├── chunkmate-backend/     # Express backend
+│   ├── routes/
+│   ├── utils/
+│   ├── uploads/
+│   └── .env
+└── README.md
+```
+
+---
+
+## 📌 Notes
+
+- Only `.md` files are accepted.
+- Paragraphs are separated based on empty lines.
+- Each table row becomes a separate chunk.
+- All links (even inside tables) are extracted and stored.
+
+---
+
+## 📷 UI Highlights
+
+- 📄 Left Sidebar: list of uploaded documents  
+- 🔍 Main Panel: chunks with copy/download  
+- ⭐ Highlights selected chunk  
+- 🔗 Links stored in DB 
+
+---
+
+
+
+## 🧪 Sample Test File
+
+```md
+# Heading 1
+This is a paragraph.
+
+Another paragraph.
+
+| Feature | Description | Link |
+|---------|-------------|------|
+| Login   | [auth](https://login.com) | OK |
+```
+
+---
+
+
+
+
+## 📦 Install Dependencies
+
+### 🔧 Backend
+
+```bash
+cd chunkmate-backend
+npm install express pg dotenv marked express-fileupload cors
+```
+
+### 🔧 Frontend
 
 ```bash
 cd chunkmate-frontend
 npm install
-npm run dev
+npm install axios
 ```
 
-Open in your browser at: [http://localhost:3000](http://localhost:3000)
-
 ---
 
-## 🗃️ Database Schema
+## 📄 Sample package.json
 
-- **documents**: stores uploaded file info
-- **chunks**: stores segmented text
-- **references**: stores extracted hyperlinks with reference to chunks
+### ✅ Backend (chunkmate-backend/package.json)
 
-Make sure the tables are initialized before use.
+```json
+{
+  "name": "chunkmate-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.0",
+    "marked": "^9.0.3",
+    "pg": "^8.11.1"
+  }
+}
+```
 
----
+### ✅ Frontend (chunkmate-frontend/package.json)
 
-## 📦 API Endpoints
-
-| Method | Route | Description |
-|--------|-------|-------------|
-| `GET`  | `/api/documents` | Get all documents |
-| `POST` | `/api/documents/upload` | Upload `.md` file |
-| `GET`  | `/api/documents/:id/chunks` | Get chunks of a document |
-
----
-
-## 📝 To Do / Improvements
-
-- Add search and filter support
-- Add Markdown rendering
-- Support for PDF/docx input
-- Download or copy individual chunks
-
----
-
-## 📃 License
-
-MIT License © 2025
-
----
-
-## 💬 Author
-
-Built with ❤️ by [Your Name]
+```json
+{
+  "name": "chunkmate-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.1.0",
+    "vite": "^5.0.0"
+  }
+}
+```
+# Testing Chunking and API Calls 
+## Refer TESTING.md file 

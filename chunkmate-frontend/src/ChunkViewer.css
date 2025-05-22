@@ -73,3 +73,7 @@
 .chunk-actions button:hover {
   background-color: #ddd;
 }
+.chunk-text {
+  white-space: pre-wrap;
+  line-height: 1.6;
+}

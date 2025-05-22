@@ -4,7 +4,8 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "jest"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -12,6 +13,10 @@
     "express": "^4.18.2",
     "express-fileupload": "^1.5.1",
     "marked": "^9.0.0",
-    "pg": "^8.10.0"
+    "pg": "^8.10.0",
+    "supertest": "^7.1.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
