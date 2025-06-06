@@ -49,14 +49,17 @@ CREATE TABLE documents (
   name TEXT NOT NULL,
   upload_date TIMESTAMP DEFAULT NOW()
 );
-
+```
+```sql
 CREATE TABLE chunks (
   id SERIAL PRIMARY KEY,
   document_id INTEGER REFERENCES documents(id) ON DELETE CASCADE,
   chunk_number INTEGER NOT NULL,
   content TEXT NOT NULL
 );
+```
 
+```sql
 CREATE TABLE hyperlinks (
   id SERIAL PRIMARY KEY,
   document_id INTEGER REFERENCES documents(id) ON DELETE CASCADE,
